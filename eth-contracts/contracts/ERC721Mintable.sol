@@ -64,7 +64,7 @@ contract Pausable is Ownable {
 
     //Modifiers
     modifier whenNotPaused() {
-        require(_paused == false,"Contract must not paused");
+        require(_paused == false,"Contract must not be paused");
         _;
     }
 
@@ -156,30 +156,34 @@ contract ERC721 is Pausable, ERC165 {
         _registerInterface(_INTERFACE_ID_ERC721);
     }
 
-    function balanceOf(address owner) public view returns (uint256) {
+    function balanceOf(address owner) public whenNotPaused view returns (uint256) {
         // TODO return the token balance of given address
         // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
+        return _ownerTokensCount[owner].current();
     }
 
-    function ownerOf(uint256 tokenId) public view returns (address) {
+    function ownerOf(uint256 tokenId) public whenNotPaused view returns (address) {
         // TODO return the owner of the given tokenId
+        return _tokenOwner[tokenId];
     }
 
 //    @dev Approves another address to transfer the given token ID
-    function approve(address to, uint256 tokenId) public {
+    function approve(address to, uint256 tokenId) public whenNotPaused{
         
         // TODO require the given address to not be the owner of the tokenId
-
+        require(_tokenOwner[tokenId] != to,"Address to be transferred to is already the owner");
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
-
+        require(msg.sender == getOwner(), "sender must be contract owner");
         // TODO add 'to' address to token approvals
-
+        _tokenApprovals[tokenId] = to;
         // TODO emit Approval Event
-
+        emit Approval(_tokenOwner[tokenId],to,tokenId); 
     }
 
-    function getApproved(uint256 tokenId) public view returns (address) {
+    function getApproved(uint256 tokenId) public whenNotPaused view returns (address) {
         // TODO return token approval if it exists
+        require(_exists(tokenId),"token does not exist");
+        return _tokenApprovals[tokenId];
     }
 
     /**
@@ -188,7 +192,7 @@ contract ERC721 is Pausable, ERC165 {
      * @param to operator address to set the approval
      * @param approved representing the status of the approval to be set
      */
-    function setApprovalForAll(address to, bool approved) public {
+    function setApprovalForAll(address to, bool approved) public whenNotPaused{
         require(to != msg.sender);
         _operatorApprovals[msg.sender][to] = approved;
         emit ApprovalForAll(msg.sender, to, approved);
@@ -200,21 +204,21 @@ contract ERC721 is Pausable, ERC165 {
      * @param operator operator address which you want to query the approval of
      * @return bool whether the given operator is approved by the given owner
      */
-    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+    function isApprovedForAll(address owner, address operator) public whenNotPaused view returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public {
+    function transferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
         require(_isApprovedOrOwner(msg.sender, tokenId));
 
         _transferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public whenNotPaused{
         safeTransferFrom(from, to, tokenId, "");
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public whenNotPaused{
         transferFrom(from, to, tokenId);
         require(_checkOnERC721Received(from, to, tokenId, _data));
     }
@@ -244,12 +248,15 @@ contract ERC721 is Pausable, ERC165 {
     // @dev Internal function to mint a new token
     // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
     function _mint(address to, uint256 tokenId) internal {
+        require(_exists(tokenId) == false, "Token already exists");
 
+        require(to != address(0), "The address is invalid");
         // TODO revert if given tokenId already exists or given address is invalid
-  
+        _tokenOwner[to] = tokenId;
         // TODO mint tokenId to given address & increase token count of owner
-
+        _ownedTokensCount[to].increment();
         // TODO emit Transfer event
+        emit Transfer(msg.sender, to, tokenId);
     }
 
     // @dev Internal function to transfer ownership of a given token ID to another address.
@@ -257,14 +264,19 @@ contract ERC721 is Pausable, ERC165 {
     function _transferFrom(address from, address to, uint256 tokenId) internal {
 
         // TODO: require from address is the owner of the given token
-
+        require(ownerOf(tokenId) == from, "Token does not belong to address");
         // TODO: require token is being transfered to valid address
+        require(to != address(0), "Address is invalid");
         
-        // TODO: clear approval
-
+        delete _tokenApprovals[tokenId];
         // TODO: update token counts & transfer ownership of the token ID 
+    
+        _ownerTokensCount[from].decrement();
+        _ownerTokensCount[to].increment();
+        _tokenOwner[tokenId] = to;
 
         // TODO: emit correct event
+        emit Transfer(from, to, tokenId);
     }
 
     /**
