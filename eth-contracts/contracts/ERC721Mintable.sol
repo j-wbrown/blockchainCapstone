@@ -14,10 +14,36 @@ contract Ownable {
     //  4) fill out the transferOwnership function
     //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
 
+    address private _owner;
+
+    constructor (address initOwner) internal {
+        //Either msg.sender or initOwner?
+        _owner = msg.sender;
+        emit changedOwnership(msg.sender);
+    }
+
+    //Events
+    event changedOwnership(address addr);
+
+    //Modifiers
+    modifier onlyOwner() {
+        require(msg.sender === _owner,"Only the owner is allowed");
+        _;
+    }
+
     function transferOwnership(address newOwner) public onlyOwner {
         // TODO add functionality to transfer control of the contract to a newOwner.
         // make sure the new owner is a real address
+        
+      require(address(newOwner) == newOwner, "Invalid address");
+      
+      _owner = newOwner;
 
+      emit changedOwnership(newOwner);
+    }
+
+    function getOwner() {
+        return _owner;
     }
 }
 
@@ -27,6 +53,34 @@ contract Ownable {
 //  3) create an internal constructor that sets the _paused variable to false
 //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
 //  5) create a Paused & Unpaused event that emits the address that triggered the event
+
+contract Pausable is Ownable {
+     bool private _paused;
+
+    // Constructor
+    constructor () internal {
+        _paused = false;
+    }
+
+    //Modifiers
+    modifier whenNotPaused() {
+        require(_paused == false,"Contract must not paused");
+        _;
+    }
+
+    modifier paused() {
+        require(_paused == true,"Contract must be paused");
+        _;
+    } 
+
+    //Events
+    event Paused(address addr, uint amount);
+    event Unpaused(address addr, uint amount);
+
+    function setPaused(bool isPaused) public onlyOwner {
+        _paused = isPaused;
+    }
+}
 
 contract ERC165 {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
