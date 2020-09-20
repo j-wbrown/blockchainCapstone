@@ -482,6 +482,11 @@ contract ERC721Enumerable is ERC165, ERC721 {
 contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     
     // TODO: Create private vars for token _name, _symbol, and _baseTokenURI (string)
+    string private _name;
+
+    string private _symbol;
+
+    string private _baseTokenURI;
 
     // TODO: create private mapping of tokenId's to token uri's called '_tokenURIs'
 
@@ -496,10 +501,23 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
     constructor (string memory name, string memory symbol, string memory baseTokenURI) public {
         // TODO: set instance var values
-
+        _name = name;
+        _symbol = symbol;
+        _baseTokenURI = baseTokenURI;
         _registerInterface(_INTERFACE_ID_ERC721_METADATA);
     }
 
+    function getName() external {
+        return _name;
+    }
+
+    function getSymbol() external {
+        return _symbol;
+    }
+
+    function getBaseTokenURI() external {
+        return _baseTokenURI;
+    }
     // TODO: create external getter functions for name, symbol, and baseTokenURI
 
     function tokenURI(uint256 tokenId) external view returns (string memory) {
@@ -515,6 +533,20 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
         // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
     // require the token exists before setting
 
+    function setTokenURItoTokenId(uint256 tokenId) internal
+    {
+        require(_exists(tokenId));
+        _tokenURIS[tokenId] = strConcat(_baseTokenURI,uint2str(tokenId));
+    }
+
+}
+
+contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
+    function mint(address to, string tokenId, string tokenURI) public onlyOwner returns(bool) {
+        super._mint(to, tokenId);
+        super.setTokenURItoTokenId(tokenURI);
+        return true;
+    }
 }
 
 //  TODO's: Create CustomERC721Token contract that inherits from the ERC721Metadata contract. You can name this contract as you please
