@@ -16,7 +16,7 @@ contract Ownable {
 
     address private _owner;
 
-    constructor (address initOwner) internal {
+    constructor () internal {
         //Either msg.sender or initOwner?
         _owner = msg.sender;
         emit changedOwnership(msg.sender);
@@ -42,7 +42,7 @@ contract Ownable {
       emit changedOwnership(newOwner);
     }
 
-    function getOwner() public {
+    function getOwner() public view returns(address) {
         return _owner;
     }
 }
@@ -508,15 +508,15 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
         _registerInterface(_INTERFACE_ID_ERC721_METADATA);
     }
 
-    function getName() external {
+    function getName() external view returns(string memory) {
         return _name;
     }
 
-    function getSymbol() external {
+    function getSymbol() external view returns(string memory) {
         return _symbol;
     }
 
-    function getBaseTokenURI() external {
+    function getBaseTokenURI() external view returns(string memory){
         return _baseTokenURI;
     }
     // TODO: create external getter functions for name, symbol, and baseTokenURI
@@ -543,7 +543,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 }
 
 contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
-    function mint(address to, string memory tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
+    function mint(address to, uint256 tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
         super._mint(to, tokenId);
         super.setTokenURItoTokenId(tokenURI);
         return true;
