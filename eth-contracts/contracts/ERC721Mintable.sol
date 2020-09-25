@@ -27,7 +27,7 @@ contract Ownable {
 
     //Modifiers
     modifier onlyOwner() {
-        require(msg.sender === _owner,"Only the owner is allowed");
+        require(msg.sender == _owner,"Only the owner is allowed");
         _;
     }
 
@@ -42,7 +42,7 @@ contract Ownable {
       emit changedOwnership(newOwner);
     }
 
-    function getOwner() {
+    function getOwner() public {
         return _owner;
     }
 }
@@ -159,7 +159,7 @@ contract ERC721 is Pausable, ERC165 {
     function balanceOf(address owner) public whenNotPaused view returns (uint256) {
         // TODO return the token balance of given address
         // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
-        return _ownerTokensCount[owner].current();
+        return _ownedTokensCount[owner].current();
     }
 
     function ownerOf(uint256 tokenId) public whenNotPaused view returns (address) {
@@ -252,7 +252,7 @@ contract ERC721 is Pausable, ERC165 {
 
         require(to != address(0), "The address is invalid");
         // TODO revert if given tokenId already exists or given address is invalid
-        _tokenOwner[to] = tokenId;
+        _tokenOwner[tokenId] = to;
         // TODO mint tokenId to given address & increase token count of owner
         _ownedTokensCount[to].increment();
         // TODO emit Transfer event
@@ -271,8 +271,8 @@ contract ERC721 is Pausable, ERC165 {
         delete _tokenApprovals[tokenId];
         // TODO: update token counts & transfer ownership of the token ID 
     
-        _ownerTokensCount[from].decrement();
-        _ownerTokensCount[to].increment();
+        _ownedTokensCount[from].decrement();
+        _ownedTokensCount[to].increment();
         _tokenOwner[tokenId] = to;
 
         // TODO: emit correct event
@@ -489,6 +489,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     string private _baseTokenURI;
 
     // TODO: create private mapping of tokenId's to token uri's called '_tokenURIs'
+    mapping (uint256 => string) private _tokenURIs;
 
     bytes4 private constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     /*
@@ -536,13 +537,13 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     function setTokenURItoTokenId(uint256 tokenId) internal
     {
         require(_exists(tokenId));
-        _tokenURIS[tokenId] = strConcat(_baseTokenURI,uint2str(tokenId));
+        _tokenURIs[tokenId] = strConcat(_baseTokenURI,uint2str(tokenId));
     }
 
 }
 
 contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
-    function mint(address to, string tokenId, string tokenURI) public onlyOwner returns(bool) {
+    function mint(address to, string memory tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
         super._mint(to, tokenId);
         super.setTokenURItoTokenId(tokenURI);
         return true;
