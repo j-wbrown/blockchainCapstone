@@ -248,7 +248,7 @@ contract ERC721 is Pausable, ERC165 {
     // @dev Internal function to mint a new token
     // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
     function _mint(address to, uint256 tokenId) internal {
-        require(_exists(tokenId) == false, "Token already exists");
+        require(!_exists(tokenId), "Token already exists");
 
         require(to != address(0), "The address is invalid");
         // TODO revert if given tokenId already exists or given address is invalid
@@ -256,7 +256,7 @@ contract ERC721 is Pausable, ERC165 {
         // TODO mint tokenId to given address & increase token count of owner
         _ownedTokensCount[to].increment();
         // TODO emit Transfer event
-        emit Transfer(msg.sender, to, tokenId);
+        emit Transfer(address(0), to, tokenId);
     }
 
     // @dev Internal function to transfer ownership of a given token ID to another address.
@@ -536,16 +536,22 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
     function setTokenURItoTokenId(uint256 tokenId) internal
     {
-        require(_exists(tokenId));
+        require(_exists(tokenId),"token is not exist!");
         _tokenURIs[tokenId] = strConcat(_baseTokenURI,uint2str(tokenId));
     }
 
 }
 
 contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
+    
+    constructor() public {
+
+    }
+    
     function mint(address to, uint256 tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
+        //return false;
         super._mint(to, tokenId);
-        super.setTokenURItoTokenId(tokenURI);
+        super.setTokenURItoTokenId(tokenId);
         return true;
     }
 }

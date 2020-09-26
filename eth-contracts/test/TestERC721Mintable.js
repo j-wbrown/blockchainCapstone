@@ -5,30 +5,29 @@ contract('TestERC721Mintable', accounts => {
     const account_one = accounts[0];
     const account_two = accounts[1];
 
+
+
     describe('match erc721 spec', function () {
         beforeEach(async function () { 
             this.contract = await ERC721MintableComplete.new({from: account_one});
-
-            this.contract.mint(accounts[2], "account_2", "TokenLand");
-            this.contract.mint(accounts[3], "account_3", "TokenLand");
-            this.contract.mint(accounts[4], "account_4", "TokenLand");
+            this.contract.mint(account_one, 2, 22);
             // TODO: mint multiple tokens
         })
 
         it('should return total supply', async function () {
             var totalSupply = await this.contract.totalSupply(); 
-            assert.equal(totalSupply, 3, "Total supply does not match");
+            assert.equal(totalSupply, 1, "Total supply does not match");
         })
 
         it('should get token balance', async function () {
-            var getBalanceValue = await this.contract.getBalance(accounts[1]); 
+            var getBalanceValue = await this.contract.balanceOf(accounts[0]); 
             assert.equal(getBalanceValue, 1, "Total balance is inconsistent");
         })
 
         // token uri should be complete i.e: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1
         it('should return token uri', async function () { 
-            var tokenId = await this.contract.tokenURI("account_2");
-            assert.equal(tokenId,"https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/account_2", "URI does not match as expected");
+            var tokenId = await this.contract.tokenURI("2");
+            assert.equal(tokenId,"https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/2", "URI does not match as expected");
         })
 
         it('should transfer token from one owner to another', async function () { 
