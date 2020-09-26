@@ -10,7 +10,7 @@ contract('TestERC721Mintable', accounts => {
     describe('match erc721 spec', function () {
         beforeEach(async function () { 
             this.contract = await ERC721MintableComplete.new({from: account_one});
-            this.contract.mint(account_one, 2, 22);
+            this.contract.mint(account_one, 2);
             // TODO: mint multiple tokens
         })
 
@@ -45,7 +45,7 @@ contract('TestERC721Mintable', accounts => {
         it('should fail when minting when address is not contract owner', async function () { 
             var isRestricted = false;
             try {
-                await this.contract.mint(account_two,3,33,{from: account_two});
+                await this.contract.mint(account_two,3,{from: account_two});
             } catch {
                 isRestricted = true;
             }

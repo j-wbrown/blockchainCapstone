@@ -544,7 +544,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
 contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
 
-    function mint(address to, uint256 tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
+    function mint(address to, uint256 tokenId) public onlyOwner returns(bool) {
         super._mint(to, tokenId);
         super.setTokenURItoTokenId(tokenId);
         return true;
