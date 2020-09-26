@@ -209,7 +209,7 @@ contract ERC721 is Pausable, ERC165 {
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public whenNotPaused {
-        require(_isApprovedOrOwner(msg.sender, tokenId));
+        require(_isApprovedOrOwner(from, tokenId),"is not approved");
 
         _transferFrom(from, to, tokenId);
     }
@@ -543,13 +543,8 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 }
 
 contract customERC721Token is ERC721Metadata("Capstone","CAPPSTN","https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
-    
-    constructor() public {
 
-    }
-    
     function mint(address to, uint256 tokenId, uint256 tokenURI) public onlyOwner returns(bool) {
-        //return false;
         super._mint(to, tokenId);
         super.setTokenURItoTokenId(tokenId);
         return true;

@@ -31,9 +31,9 @@ contract('TestERC721Mintable', accounts => {
         })
 
         it('should transfer token from one owner to another', async function () { 
-            await this.contract.transferFrom(accounts[2],accounts[3],"account_2", {from: accounts[2]});
-            var ownerOfAccount2Token = await this.contract.ownerOf("account_2");
-            assert.equal(ownerOfAccount2Token, accounts[3],"owner should be different");
+            await this.contract.transferFrom(account_one,accounts[1],2, {from: account_one});
+            var ownerOfAccount2Token = await this.contract.ownerOf(2);
+            assert.equal(ownerOfAccount2Token, accounts[1],"owner should be different");
         })
     });
 
@@ -45,7 +45,7 @@ contract('TestERC721Mintable', accounts => {
         it('should fail when minting when address is not contract owner', async function () { 
             var isRestricted = false;
             try {
-                this.contract.mint(account_two,"account_3",{from: account_two});
+                await this.contract.mint(account_two,3,33,{from: account_two});
             } catch {
                 isRestricted = true;
             }
