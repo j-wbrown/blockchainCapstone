@@ -6,13 +6,11 @@ import "./Verifier.sol";
 
 // TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
 
-contract SoInSquareVerifier is customERC721Token {
+contract SoInSquareVerifier is customERC721Token, Verifier {
     struct solution {  
         uint256  solutionIndex;  
         address solutionAddress; 
     }
-
-    Verifier zokratesVerifier;
 
     uint256 noOfSolutions;
 
@@ -46,15 +44,13 @@ contract SoInSquareVerifier is customERC721Token {
     }
 
     constructor (address theAddress) public {
-        zokratesVerifier = Verifier(theAddress);
         noOfSolutions = 0;
         noTokensMinted = 0;
     }
 
     function mintNFT(uint[2] memory a,uint[2][2] memory b,
                      uint[2] memory c, uint[2] memory input, address newAddress, uint256 newId) public {
-
-                         //require(zokratesVerifier.verifyTx(a,b,c,input), "solution verification failed");
+                         require(verifyTx(a,b,c,input), "solution verification failed");
                          bytes32 solHash = keccak256(abi.encodePacked(a,b,c,input));
                          require(solutions[solHash].solutionAddress == address(0), "solution already exists");
                          addNewSolution(newAddress, newId, a, b, c, input);
