@@ -43,7 +43,7 @@ contract SoInSquareVerifier is customERC721Token, Verifier {
         return keccak256(abi.encodePacked(a,b,c,input));
     }
 
-    constructor (address theAddress) public {
+    constructor () public {
         noOfSolutions = 0;
         noTokensMinted = 0;
     }
