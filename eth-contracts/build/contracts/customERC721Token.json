@@ -29434,8 +29434,7 @@
     }
   },
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-09-27T22:41:34.937Z",
-  "networkType": "ethereum",
+  "updatedAt": "2020-09-27T23:06:50.356Z",
   "devdoc": {
     "methods": {
       "isApprovedForAll(address,address)": {

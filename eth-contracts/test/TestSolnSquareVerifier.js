@@ -33,7 +33,7 @@ contract('test SoInSquareVerifier', accounts => {
 
     describe("Test new solution added to contract", function() {
         beforeEach(async function() {
-            this.contract = await soInSquareVerifier.new(account_one);
+            this.contract = await soInSquareVerifier.new({from: account_one});
         })
 
         it('add solution to contract', async function() {
@@ -51,7 +51,7 @@ contract('test SoInSquareVerifier', accounts => {
 
     describe("Test ERC712 token can be minted", function() {
         beforeEach(async function() {
-            this.contract = await soInSquareVerifier.new(account_one);
+            this.contract = await soInSquareVerifier.new({from: account_one});
         })
 
         it('mint contract', async function() {

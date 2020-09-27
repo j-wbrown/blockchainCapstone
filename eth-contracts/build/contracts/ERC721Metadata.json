@@ -29072,7 +29072,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-09-27T22:38:53.626Z",
+  "updatedAt": "2020-09-27T23:06:50.315Z",
   "devdoc": {
     "methods": {
       "isApprovedForAll(address,address)": {
