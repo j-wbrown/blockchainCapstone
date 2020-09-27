@@ -16,6 +16,8 @@ contract SoInSquareVerifier is customERC721Token {
 
     uint256 noOfSolutions;
 
+    uint256 noTokensMinted;
+
     mapping(bytes32 => solution) private solutions;
 
     event addSolution(address newSolution);
@@ -35,6 +37,10 @@ contract SoInSquareVerifier is customERC721Token {
         return noOfSolutions;
     }
 
+    function getTokensMinted() public view returns(uint256) {
+        return noTokensMinted;
+    }
+
     function getHash(uint[2] memory a,uint[2][2] memory b, uint[2] memory c, uint[2] memory input) internal returns(bytes32) {
         return keccak256(abi.encodePacked(a,b,c,input));
     }
@@ -42,17 +48,18 @@ contract SoInSquareVerifier is customERC721Token {
     constructor (address theAddress) public {
         zokratesVerifier = Verifier(theAddress);
         noOfSolutions = 0;
+        noTokensMinted = 0;
     }
 
     function mintNFT(uint[2] memory a,uint[2][2] memory b,
-                     uint[2] memory c, uint[2] memory input, address newAddress, uint256 newId) public returns (bool) {
+                     uint[2] memory c, uint[2] memory input, address newAddress, uint256 newId) public {
 
-                         require(zokratesVerifier.verifyTx(a,b,c,input), "solution verification failed");
-                         bytes32 solHash = getHash(a,b,c,input);
+                         //require(zokratesVerifier.verifyTx(a,b,c,input), "solution verification failed");
+                         bytes32 solHash = keccak256(abi.encodePacked(a,b,c,input));
                          require(solutions[solHash].solutionAddress == address(0), "solution already exists");
                          addNewSolution(newAddress, newId, a, b, c, input);
-                         bool isMinted = super.mint(newAddress, newId);
-                         return isMinted;
+                         mint(newAddress, newId);
+                         noTokensMinted += 1;
     }
 }
 

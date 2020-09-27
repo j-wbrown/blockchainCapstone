@@ -51,11 +51,17 @@ contract('test SoInSquareVerifier', accounts => {
 
     describe("Test ERC712 token can be minted", function() {
         beforeEach(async function() {
-            this.contract = await soInSquareVerifier.new({from: account_one});
+            this.contract = await soInSquareVerifier.new(account_one);
         })
 
-        it('mint contract', function() {
-            
+        it('mint contract', async function() {
+            await this.contract.mintNFT(
+                proofData.proof.a,proofData.proof.b,
+                proofData.proof.c,proofData.inputs,
+                account_one,23);
+
+            let tokensMinted = await this.contract.getTokensMinted();
+            assert.equal(tokensMinted, 1, "Token has not been minted");
         })
     });
 });
