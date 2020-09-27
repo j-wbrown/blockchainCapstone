@@ -14,32 +14,46 @@ contract SoInSquareVerifier is customERC721Token {
 
     Verifier zokratesVerifier;
 
+    uint256 noOfSolutions;
+
     mapping(bytes32 => solution) private solutions;
 
     event addSolution(address newSolution);
 
-    function addNewSolution(address newAddress, uint256 solutionId, bytes32 solutionHash) public returns (bool) {
+    function addNewSolution(address newAddress, uint256 solutionId, uint[2] memory a,uint[2][2] memory b,
+                     uint[2] memory c, uint[2] memory input) public {
+        bytes32 solutionHash = getHash(a,b,c,input);
         solutions[solutionHash] = solution({
             solutionIndex: solutionId,
             solutionAddress: newAddress
         });
+        noOfSolutions += 1;
         emit addSolution(newAddress);
+    }
+
+    function getSolutionsAdded() public view returns(uint256) {
+        return noOfSolutions;
+    }
+
+    function getHash(uint[2] memory a,uint[2][2] memory b, uint[2] memory c, uint[2] memory input) internal returns(bytes32) {
+        return keccak256(abi.encodePacked(a,b,c,input));
     }
 
     constructor (address theAddress) public {
         zokratesVerifier = Verifier(theAddress);
+        noOfSolutions = 0;
     }
 
     function mintNFT(uint[2] memory a,uint[2][2] memory b,
                      uint[2] memory c, uint[2] memory input, address newAddress, uint256 newId) public returns (bool) {
 
                          require(zokratesVerifier.verifyTx(a,b,c,input), "solution verification failed");
-                         bytes32 solHash = keccak256(abi.encodePacked(a,b,c,input));
+                         bytes32 solHash = getHash(a,b,c,input);
                          require(solutions[solHash].solutionAddress == address(0), "solution already exists");
-                         addNewSolution(newAddress, newId, solHash);
+                         addNewSolution(newAddress, newId, a, b, c, input);
                          bool isMinted = super.mint(newAddress, newId);
                          return isMinted;
-                     }
+    }
 }
 
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
