@@ -11,12 +11,13 @@ contract('TestERC721Mintable', accounts => {
         beforeEach(async function () { 
             this.contract = await ERC721MintableComplete.new({from: account_one});
             this.contract.mint(account_one, 2);
+            this.contract.mint(account_two, 3);
             // TODO: mint multiple tokens
         })
 
         it('should return total supply', async function () {
             var totalSupply = await this.contract.totalSupply(); 
-            assert.equal(totalSupply, 1, "Total supply does not match");
+            assert.equal(totalSupply, 2, "Total supply does not match");
         })
 
         it('should get token balance', async function () {
