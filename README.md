@@ -16,7 +16,7 @@ This is the capstone project for the blockchain nanodegree offered by udacity.
 # Contract References
    Replacing 'Verifier'
    --------------------
-   > transaction hash:    0xcf20ffabf8e141d44d76c33d2dbce80b1d70ccd62291083507f5b8da9e13b5ca
+   > transaction hash:    0xcf20ffabf8e141d44d76c33d2dbce80b1d70ccd62291083507f5b8da9e13b5ca   
    > Blocks: 0            Seconds: 8
    > contract address:    0x90934a87eBa8D5beaB8f78339A05889B83EfA78f
    > block number:        7278960
