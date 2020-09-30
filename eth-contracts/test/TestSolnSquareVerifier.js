@@ -63,7 +63,28 @@ contract('test SoInSquareVerifier', accounts => {
             let tokensMinted = await this.contract.getTokensMinted();
             assert.equal(tokensMinted, 1, "Token has not been minted");
         })
+
+        it('should test if a repeated solution can be added for contract - SolnSquareVerifier', async function () { 
+                await this.contract.mintNFT(
+                  proofData.proof.a,proofData.proof.b,
+                  proofData.proof.c,proofData.inputs,
+                  account_one,23);
+
+                  let canAddRepeated = false;
+                  try{
+                    await this.contract.mintNFT(
+                      proofData.proof.a,proofData.proof.b,
+                      proofData.proof.c,proofData.inputs,
+                      account_one,23);
+                  }
+                  catch(e){
+                      canAddRepeated = true
+                  }
+                  assert.equal(canAddRepeated, true, "Solution should be unique. Repeated solution can be added.");
+      })
     });
+
+    
 });
 
 // Test if a new solution can be added for contract - SolnSquareVerifier
