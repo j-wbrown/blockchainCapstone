@@ -81,8 +81,28 @@ contract('test SoInSquareVerifier', accounts => {
                       canAddRepeated = true
                   }
                   assert.equal(canAddRepeated, true, "Solution should be unique. Repeated solution can be added.");
-      })
-    });
+         })
+
+      
+      it('should test if solution can be minted with invalid proof' , async function () {   
+        let mintInvalid = false
+
+        try{
+          falseProof.proof.a[0] = proofData.proof.a[1];
+          falseProof.proof.a[1] = proofData.proof.a[0];
+
+          await this.contract.mintNFT(
+            falseProof.proof.a,proofData.proof.b,
+            proofData.proof.c,proofData.inputs,
+            account_one,23);
+        }
+        catch(e){
+            mintInvalid = true
+        }
+        assert.equal(mintInvalid, true, "Solution can be minted with incorrect proof.");
+    })
+
+  });
 
     
 });
